@@ -5,7 +5,7 @@
   <properties resource="jdbc.properties"/>
 
   <typeAliases>
-    <!--<package name="com.lyanba.domain"/>-->
+    <package name="com.lyanba.crm.settings.domain"/>
   </typeAliases>
 
   <environments default="development">
@@ -21,6 +21,6 @@
   </environments>
 
   <mappers>
-    <package name="com.lyanba.dao"/>
+    <package name="com.lyanba.crm.settings.dao"/>
   </mappers>
 </configuration>

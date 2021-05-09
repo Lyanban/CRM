@@ -14,6 +14,6 @@ request.getServerPort() + request.getContextPath() + "/";
 
 </head>
 <body>
-	<img src="image/home.png" style="position: relative;top: -10px; left: -10px;"/>
+	<img src="image/home.png" style="position: relative;top: 10px; left: 30px;"/>
 </body>
 </html>

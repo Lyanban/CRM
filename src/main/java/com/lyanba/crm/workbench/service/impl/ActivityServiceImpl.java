@@ -2,6 +2,7 @@ package com.lyanba.crm.workbench.service.impl;
 
 import com.lyanba.crm.utils.SqlSessionUtil;
 import com.lyanba.crm.workbench.dao.ActivityDao;
+import com.lyanba.crm.workbench.domain.Activity;
 import com.lyanba.crm.workbench.service.ActivityService;
 
 /**
@@ -12,4 +13,9 @@ import com.lyanba.crm.workbench.service.ActivityService;
  */
 public class ActivityServiceImpl implements ActivityService {
     private ActivityDao activityDao = SqlSessionUtil.getSqlSession().getMapper(ActivityDao.class);
+
+    @Override
+    public boolean save(Activity activity) {
+        return activityDao.save(activity) == 1;
+    }
 }

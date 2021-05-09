@@ -27,7 +27,7 @@
               // 日历插件
               $(".time").datetimepicker({
                   minView: "month",
-                  language:  'zh-CN',
+                  language: 'zh-CN',
                   format: 'yyyy-mm-dd',
                   autoclose: true,
                   todayBtn: true,
@@ -62,10 +62,50 @@
               });
 
               $("#create-closeBtn").on("click", function () {
-                  // 把天蝎的信息全部清空
+                  // 把填写的信息全部清空
+                  // 清空表单替换
+                  $("#activityAddForm")[0].reset();
                   $("#createActivityModal").modal("hide");
               });
           });
+
+          //为保存按钮绑定事件，执行添加操作
+          $("#saveBtn").on("click", function () {
+              $.ajax({
+                  url: "workbench/activity/save.do",
+                  type: "post",
+                  data: {
+                      "owner": $.trim($("#create-owner").val()),
+                      "name": $.trim($("#create-name").val()),
+                      "startDate": $.trim($("#create-startDate").val()),
+                      "endDate": $.trim($("#create-endDate").val()),
+                      "cost": $.trim($("#create-cost").val()),
+                      "description": $.trim($("#create-description").val())
+                  },
+                  dataType: "json",
+                  success: function (data) {
+                      if (data.success) {
+                          // 添加成功后，刷新市场活动信息列表
+                          // 清空表单，关闭模态窗口
+                          // clearForm();
+                          // 清空表单替换
+                          $("#activityAddForm")[0].reset();
+                          $("#createActivityModal").modal("hide");
+                      } else {
+                          alert("市场活动添加失败！")
+                      }
+                  }
+              });
+          });
+
+          // 把填写的信息全部清空
+          /*function clearForm() {
+              $("#create-name").val("");
+              $("#create-startDate").val("");
+              $("#create-endDate").val("");
+              $("#create-cost").val("");
+              $("#create-description").val("");
+          }*/
       });
   </script>
 </head>
@@ -83,7 +123,7 @@
       </div>
       <div class="modal-body">
 
-        <form class="form-horizontal" role="form">
+        <form class="form-horizontal" role="form" id="activityAddForm">
 
           <div class="form-group">
             <label for="create-owner" class="col-sm-2 control-label">所有者<span
@@ -132,8 +172,8 @@
       <div class="modal-footer">
         <%--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
         <button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>--%>
-          <button type="button" class="btn btn-default" id="create-closeBtn">关闭</button>
-          <button type="button" class="btn btn-primary" id="create-saveBtn">保存</button>
+        <button type="button" class="btn btn-default" id="create-closeBtn">关闭</button>
+        <button type="button" class="btn btn-primary" id="saveBtn">保存</button>
       </div>
     </div>
   </div>

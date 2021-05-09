@@ -9,4 +9,9 @@
     where loginAct = #{loginAct}
       and loginPwd = #{loginPwd}
   </select>
+
+  <select id="getUserList" resultType="com.lyanba.crm.settings.domain.User">
+    select t.*
+    from crm.tbl_user t
+  </select>
 </mapper>

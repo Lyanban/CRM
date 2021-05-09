@@ -3,6 +3,8 @@ package com.lyanba.crm.settings.service;
 import com.lyanba.crm.exception.LoginException;
 import com.lyanba.crm.settings.domain.User;
 
+import java.util.List;
+
 /**
  * @className: UserService
  * @description:
@@ -11,4 +13,6 @@ import com.lyanba.crm.settings.domain.User;
  */
 public interface UserService {
     User login(String loginAct, String loginPwd, String ip) throws LoginException;
+
+    List<User> getUserList();
 }

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=utf-8" language="java" isELIgnored="false" %>
 <%
-String basePath = request.getScheme() + "://" + request.getServerName() + ":" +
-request.getServerPort() + request.getContextPath() + "/";
+  String basePath = request.getScheme() + "://" + request.getServerName() + ":" +
+          request.getServerPort() + request.getContextPath() + "/";
 %>
 <!DOCTYPE html>
 <html>
@@ -21,12 +21,52 @@ request.getServerPort() + request.getContextPath() + "/";
           src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
   <script type="text/javascript">
-
       $(function () {
+          // 为创建按钮绑定事件，打开添加操作的模态窗口
+          $("#addBtn").on("click", function () {
+              // 日历插件
+              $(".time").datetimepicker({
+                  minView: "month",
+                  language:  'zh-CN',
+                  format: 'yyyy-mm-dd',
+                  autoclose: true,
+                  todayBtn: true,
+                  pickerPosition: "bottom-left"
+              });
 
+              $.ajax({
+                  url: "workbench/activity/getUserList.do",
+                  type: "get",
+                  data: {},
+                  dataType: "json",
+                  success: function (data) {
+                      /*
+                        需要后端返回用户列表，
+                        data: [{用户1}, {用户2}, {}]
+                      */
+                      // 使用append，option标签将没有样式
+                      // $("#create-owner").append("<option value=''></option>");
+                      $.each(data, function (index, item) {
+                          $("#create-owner").append("<option value='" + item.id + "'>" + item.name + "</option>");
+                      });
+                      /*let html = "<option></option>";
+                      $.each(data, function (i, n) {
+                          html += "<option value='" + n.id + "'>" + n.name + "</option>";
+                      });
+                      $("#create-owner").html(html);*/
+                      //将当前登录的用户，设置为下拉框默认的选项
+                      //在js中使用el表达式，el表达式一定要套用在字符串("")中
+                      $("#create-owner").val("${sessionScope.user.id}");
+                      $("#createActivityModal").modal("show");
+                  }
+              });
 
+              $("#create-closeBtn").on("click", function () {
+                  // 把天蝎的信息全部清空
+                  $("#createActivityModal").modal("hide");
+              });
+          });
       });
-
   </script>
 </head>
 <body>
@@ -46,30 +86,30 @@ request.getServerPort() + request.getContextPath() + "/";
         <form class="form-horizontal" role="form">
 
           <div class="form-group">
-            <label for="create-marketActivityOwner" class="col-sm-2 control-label">所有者<span
+            <label for="create-owner" class="col-sm-2 control-label">所有者<span
                     style="font-size: 15px; color: red;">*</span></label>
             <div class="col-sm-10" style="width: 300px;">
-              <select class="form-control" id="create-marketActivityOwner">
-                <option>zhangsan</option>
+              <select class="form-control" id="create-owner">
+                <%--<option>zhangsan</option>
                 <option>lisi</option>
-                <option>wangwu</option>
+                <option>wangwu</option>--%>
               </select>
             </div>
-            <label for="create-marketActivityName" class="col-sm-2 control-label">名称<span
+            <label for="create-name" class="col-sm-2 control-label">名称<span
                     style="font-size: 15px; color: red;">*</span></label>
             <div class="col-sm-10" style="width: 300px;">
-              <input type="text" class="form-control" id="create-marketActivityName">
+              <input type="text" class="form-control" id="create-name">
             </div>
           </div>
 
           <div class="form-group">
-            <label for="create-startTime" class="col-sm-2 control-label">开始日期</label>
+            <label for="create-startDate" class="col-sm-2 control-label">开始日期</label>
             <div class="col-sm-10" style="width: 300px;">
-              <input type="text" class="form-control" id="create-startTime">
+              <input type="text" class="form-control time" id="create-startDate" readonly placeholder="请选择日期">
             </div>
-            <label for="create-endTime" class="col-sm-2 control-label">结束日期</label>
+            <label for="create-endDate" class="col-sm-2 control-label">结束日期</label>
             <div class="col-sm-10" style="width: 300px;">
-              <input type="text" class="form-control" id="create-endTime">
+              <input type="text" class="form-control time" id="create-endDate" readonly placeholder="请选择日期">
             </div>
           </div>
           <div class="form-group">
@@ -80,9 +120,9 @@ request.getServerPort() + request.getContextPath() + "/";
             </div>
           </div>
           <div class="form-group">
-            <label for="create-describe" class="col-sm-2 control-label">描述</label>
+            <label for="create-description" class="col-sm-2 control-label">描述</label>
             <div class="col-sm-10" style="width: 81%;">
-              <textarea class="form-control" rows="3" id="create-describe"></textarea>
+              <textarea class="form-control" rows="3" id="create-description"></textarea>
             </div>
           </div>
 
@@ -90,8 +130,10 @@ request.getServerPort() + request.getContextPath() + "/";
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+        <%--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>--%>
+          <button type="button" class="btn btn-default" id="create-closeBtn">关闭</button>
+          <button type="button" class="btn btn-primary" id="create-saveBtn">保存</button>
       </div>
     </div>
   </div>
@@ -177,7 +219,6 @@ request.getServerPort() + request.getContextPath() + "/";
 
     <div class="btn-toolbar" role="toolbar" style="height: 80px;">
       <form class="form-inline" role="form" style="position: relative;top: 8%; left: 5px;">
-
         <div class="form-group">
           <div class="input-group">
             <div class="input-group-addon">名称</div>
@@ -191,7 +232,6 @@ request.getServerPort() + request.getContextPath() + "/";
             <input class="form-control" type="text">
           </div>
         </div>
-
 
         <div class="form-group">
           <div class="input-group">
@@ -207,17 +247,34 @@ request.getServerPort() + request.getContextPath() + "/";
         </div>
 
         <button type="submit" class="btn btn-default">查询</button>
-
       </form>
     </div>
     <div class="btn-toolbar" role="toolbar"
          style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
       <div class="btn-group" style="position: relative; top: 18%;">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createActivityModal"><span
+        <!--
+						点击创建按钮，观察两个属性和属性值
+						data-toggle="modal"：
+            表示触发该按钮，将要打开一个模态窗口
+						data-target="#createActivityModal"：
+            表示要打开哪个模态窗口，通过#id的形式找到该窗口
+						现在我们是以属性和属性值的方式写在了button元素中，用来打开模态窗口
+						但是这样做是有问题的：
+            问题在于没有办法对按钮的功能进行扩充
+						所以未来的实际项目开发，对于触发模态窗口的操作，一定不要写死在元素当中，
+						应该由我们自己写js代码来操作
+					-->
+        <%--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createActivityModal"><span
                 class="glyphicon glyphicon-plus"></span> 创建
         </button>
         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span
                 class="glyphicon glyphicon-pencil"></span> 修改
+        </button>--%>
+        <button type="button" class="btn btn-primary" id="addBtn">
+          <span class="glyphicon glyphicon-plus"></span> 创建
+        </button>
+        <button type="button" class="btn btn-default">
+          <span class="glyphicon glyphicon-pencil"></span> 修改
         </button>
         <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
       </div>
@@ -237,7 +294,8 @@ request.getServerPort() + request.getContextPath() + "/";
         <tbody>
         <tr class="active">
           <td><input type="checkbox"/></td>
-          <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/activity/detail.jsp';">发传单</a>
+          <td><a style="text-decoration: none; cursor: pointer;"
+                 onclick="window.location.href='workbench/activity/detail.jsp';">发传单</a>
           </td>
           <td>zhangsan</td>
           <td>2020-10-10</td>
@@ -245,7 +303,8 @@ request.getServerPort() + request.getContextPath() + "/";
         </tr>
         <tr class="active">
           <td><input type="checkbox"/></td>
-          <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/activity/detail.jsp';">发传单</a>
+          <td><a style="text-decoration: none; cursor: pointer;"
+                 onclick="window.location.href='workbench/activity/detail.jsp';">发传单</a>
           </td>
           <td>zhangsan</td>
           <td>2020-10-10</td>

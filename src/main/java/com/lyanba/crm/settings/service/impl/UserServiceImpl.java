@@ -8,6 +8,7 @@ import com.lyanba.crm.utils.DateTimeUtil;
 import com.lyanba.crm.utils.SqlSessionUtil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,5 +42,10 @@ public class UserServiceImpl implements UserService {
             throw new LoginException("IP地址受限");
         }
         return user;
+    }
+
+    @Override
+    public List<User> getUserList() {
+        return userDao.getUserList();
     }
 }

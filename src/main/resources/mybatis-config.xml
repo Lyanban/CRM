@@ -6,6 +6,7 @@
 
   <typeAliases>
     <package name="com.lyanba.crm.settings.domain"/>
+    <package name="com.lyanba.crm.workbench.domain"/>
   </typeAliases>
 
   <environments default="development">
@@ -22,5 +23,6 @@
 
   <mappers>
     <package name="com.lyanba.crm.settings.dao"/>
+    <package name="com.lyanba.crm.workbench.dao"/>
   </mappers>
 </configuration>

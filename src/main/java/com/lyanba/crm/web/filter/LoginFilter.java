@@ -25,5 +25,17 @@ public class LoginFilter implements Filter {
                 response.sendRedirect(request.getContextPath() + "/login.jsp");
             }
         }
+        /*if ("/login.jsp".equals(request.getServletPath())) {
+            if (null != request.getSession().getAttribute("user")) response.sendRedirect(request.getContextPath() + "/workbench/index.jsp");
+            else chain.doFilter(request, response);
+        } else if ("/settings/user/login.do".equals(request.getServletPath())) {
+            chain.doFilter(request, response);
+        } else {
+            if (null != request.getSession().getAttribute("user")) {
+                chain.doFilter(request, response);
+            } else {
+                response.sendRedirect(request.getContextPath() + "/login.jsp");
+            }
+        }*/
     }
 }

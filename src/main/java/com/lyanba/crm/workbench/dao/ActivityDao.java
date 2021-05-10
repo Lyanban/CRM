@@ -2,6 +2,9 @@ package com.lyanba.crm.workbench.dao;
 
 import com.lyanba.crm.workbench.domain.Activity;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @className: ActivityDao
  * @description:
@@ -10,4 +13,8 @@ import com.lyanba.crm.workbench.domain.Activity;
  */
 public interface ActivityDao {
     int save(Activity activity);
+
+    List<Activity> getActivityListByCondition(Map<String, Object> map);
+
+    int getTotalByCondition(Map<String, Object> map);
 }

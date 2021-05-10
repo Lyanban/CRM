@@ -7,6 +7,7 @@ import com.lyanba.crm.utils.DateTimeUtil;
 import com.lyanba.crm.utils.PrintJson;
 import com.lyanba.crm.utils.ServiceFactory;
 import com.lyanba.crm.utils.UUIDUtil;
+import com.lyanba.crm.vo.PaginationVO;
 import com.lyanba.crm.workbench.domain.Activity;
 import com.lyanba.crm.workbench.service.ActivityService;
 import com.lyanba.crm.workbench.service.impl.ActivityServiceImpl;
@@ -16,7 +17,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @className: ActivityController
@@ -33,7 +36,32 @@ public class ActivityController extends HttpServlet {
             getUserList(request, response);
         } else if ("/workbench/activity/save.do".equals(path)) {
             save(request, response);
+        } else if ("/workbench/activity/pageList.do".equals(path)) {
+            pageList(request, response);
         }
+    }
+
+    private void pageList(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(">---------- 进入到查询市场信息活动列表的操作（结合条件查询 + 分页查询） ----------<");
+        String name = request.getParameter("name");
+        String owner = request.getParameter("owner");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+        String pageNoStr = request.getParameter("pageNo");
+        String pageSizeStr = request.getParameter("pageSize");
+        int pageNo = Integer.parseInt(pageNoStr);
+        int pageSize = Integer.parseInt(pageSizeStr);
+        int skipCount = (pageNo - 1) * pageSize;
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", name);
+        map.put("owner", owner);
+        map.put("startDate", startDate);
+        map.put("endDate", endDate);
+        map.put("skipCount", skipCount);
+        map.put("pageSize", pageSize);
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        PaginationVO<Activity> vo =  activityService.pageList(map);
+        PrintJson.printJsonObj(response, vo);
     }
 
     private void save(HttpServletRequest request, HttpServletResponse response) {
@@ -60,7 +88,7 @@ public class ActivityController extends HttpServlet {
         activity.setCreateTime(createTime);
         activity.setCreateBy(createBy);
         ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
-        boolean flag =  activityService.save(activity);
+        boolean flag = activityService.save(activity);
         PrintJson.printJsonFlag(response, flag);
     }
 

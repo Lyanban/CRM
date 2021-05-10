@@ -144,6 +144,48 @@
           $("#activityBody").on("click", $("input[name=xz]"), function () {
               $("#qx").prop("checked", $("input[name=xz]").length === $("input[name=xz]:checked").length);
           });
+
+          // 为删除按钮绑定事件，执行市场活动删除操作
+          $("#deleteBtn").on("click", function () {
+              // 找到所有选中的复选框
+              let $xz = $("input[name=xz]:checked");
+              // dom数组长度为零说明没有选中的活动记录
+              if ($xz.length === 0) {
+                  alert("请选择要删除的活动记录");
+              } else {
+                  if (confirm("确定要删除选中的活动记录吗？")) {
+                      //拼接参数
+                      let param = "";
+                      //将$xz中的每一个dom对象遍历出来，取其value值，就相当于取得了需要删除的记录的id
+                      /*for (let i = 0; i < $xz.length; i++) {
+                          param += "id=" + $($xz[i]).val();
+                          //如果不是最后一个元素，需要在后面追加一个&符
+                          if (i < $xz.length - 1) {
+                              param += "&";
+                          }
+                      }*/
+                      $.each($xz, function (index, item) {
+                          param += "id=" + item.value + "&";
+                      });
+                      param = param.substr(0, param.length - 1);
+                      $.ajax({
+                          url: "workbench/activity/delete.do",
+                          type: "post",
+                          data: param,
+                          dataType: "json",
+                          success: function (data) {
+                              if (data.success) {
+                                  // 刷新市场活动列表
+                                  pageList(1,2);
+                              } else {
+                                  alert("删除市场活动失败！");
+                              }
+                          }
+                      });
+                  }
+              }
+          });
+
           // 把填写的信息全部清空
           /*function clearForm() {
               $("#create-name").val("");
@@ -169,6 +211,8 @@
               以上为pageList方法制定了六个入口，也就是说，在以上6个操作执行完毕后，我们必须要调用pageList方法，刷新市场活动信息列表
          */
       function pageList(pageNo, pageSize) {
+          $("#qx").prop("checked", false);
+
           //查询前，将隐藏域中保存的信息取出来，重新赋予到搜索框中
           $("#search-name").val($.trim($("#hidden-name").val()));
           $("#search-owner").val($.trim($("#hidden-owner").val()));
@@ -440,7 +484,9 @@
         <button type="button" class="btn btn-default">
           <span class="glyphicon glyphicon-pencil"></span> 修改
         </button>
-        <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+        <button type="button" class="btn btn-danger" id="deleteBtn">
+          <span class="glyphicon glyphicon-minus"></span> 删除
+        </button>
       </div>
 
     </div>

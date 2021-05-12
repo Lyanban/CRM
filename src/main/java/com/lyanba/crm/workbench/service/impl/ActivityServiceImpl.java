@@ -1,5 +1,7 @@
 package com.lyanba.crm.workbench.service.impl;
 
+import com.lyanba.crm.settings.dao.UserDao;
+import com.lyanba.crm.settings.domain.User;
 import com.lyanba.crm.utils.SqlSessionUtil;
 import com.lyanba.crm.vo.PaginationVO;
 import com.lyanba.crm.workbench.dao.ActivityDao;
@@ -7,6 +9,7 @@ import com.lyanba.crm.workbench.dao.ActivityRemarkDao;
 import com.lyanba.crm.workbench.domain.Activity;
 import com.lyanba.crm.workbench.service.ActivityService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +22,7 @@ import java.util.Map;
 public class ActivityServiceImpl implements ActivityService {
     private ActivityDao activityDao = SqlSessionUtil.getSqlSession().getMapper(ActivityDao.class);
     private ActivityRemarkDao activityRemarkDao = SqlSessionUtil.getSqlSession().getMapper(ActivityRemarkDao.class);
+    private UserDao userDao = SqlSessionUtil.getSqlSession().getMapper(UserDao.class);
 
     @Override
     public boolean save(Activity activity) {
@@ -51,5 +55,15 @@ public class ActivityServiceImpl implements ActivityService {
             flag = false;
         }
         return flag;
+    }
+
+    @Override
+    public Map<String, Object> getUserListAndActivity(String id) {
+        List<User> uList = userDao.getUserList();
+        Activity a = activityDao.getById(id);
+        Map<String, Object> map = new HashMap<>();
+        map.put("uList", uList);
+        map.put("a", a);
+        return map;
     }
 }

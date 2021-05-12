@@ -40,7 +40,17 @@ public class ActivityController extends HttpServlet {
             pageList(request, response);
         } else if ("/workbench/activity/delete.do".equals(path)) {
             delete(request, response);
+        } else if ("/workbench/activity/getUserListAndActivity.do".equals(path)) {
+            getUserListAndActivity(request, response);
         }
+    }
+
+    private void getUserListAndActivity(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(">---------- 进入到查询用户信息列表和根据市场活动id查询单条记录的操作 ----------<");
+        String id = request.getParameter("id");
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        Map<String, Object> map = activityService.getUserListAndActivity(id);
+        PrintJson.printJsonObj(response, map);
     }
 
     private void delete(HttpServletRequest request, HttpServletResponse response) {

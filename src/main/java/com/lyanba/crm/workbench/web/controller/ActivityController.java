@@ -42,7 +42,37 @@ public class ActivityController extends HttpServlet {
             delete(request, response);
         } else if ("/workbench/activity/getUserListAndActivity.do".equals(path)) {
             getUserListAndActivity(request, response);
+        } else if ("/workbench/activity/update.do".equals(path)) {
+            update(request, response);
         }
+    }
+
+    private void update(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(">---------- 进入到市场活动修改操作 ----------<");
+        String id = request.getParameter("id");
+        String owner = request.getParameter("owner");
+        String name = request.getParameter("name");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+        String cost = request.getParameter("cost");
+        String description = request.getParameter("description");
+        //修改时间：当前系统时间
+        String editTime = DateTimeUtil.getSysTime();
+        //修改人：当前登录用户
+        String editBy = ((User) request.getSession().getAttribute("user")).getName();
+        Activity a = new Activity();
+        a.setId(id);
+        a.setCost(cost);
+        a.setStartDate(startDate);
+        a.setOwner(owner);
+        a.setName(name);
+        a.setEndDate(endDate);
+        a.setDescription(description);
+        a.setEditBy(editBy);
+        a.setEditTime(editTime);
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        boolean flag = activityService.update(a);
+        PrintJson.printJsonFlag(response, flag);
     }
 
     private void getUserListAndActivity(HttpServletRequest request, HttpServletResponse response) {
@@ -80,7 +110,7 @@ public class ActivityController extends HttpServlet {
         map.put("skipCount", skipCount);
         map.put("pageSize", pageSize);
         ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
-        PaginationVO<Activity> vo =  activityService.pageList(map);
+        PaginationVO<Activity> vo = activityService.pageList(map);
         PrintJson.printJsonObj(response, vo);
     }
 

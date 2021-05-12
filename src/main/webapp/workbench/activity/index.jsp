@@ -226,6 +226,52 @@
               }
           });
 
+          $("#updateBtn").on("click", function () {
+              // 日历插件
+              $(".time").datetimepicker({
+                  minView: "month",
+                  language: 'zh-CN',
+                  format: 'yyyy-mm-dd',
+                  autoclose: true,
+                  todayBtn: true,
+                  pickerPosition: "bottom-left"
+              });
+
+              $.ajax({
+                  url: "workbench/activity/update.do",
+                  data: {
+                      "id": $.trim($("#edit-id").val()),
+                      "owner": $.trim($("#edit-owner").val()),
+                      "name": $.trim($("#edit-name").val()),
+                      "startDate": $.trim($("#edit-startDate").val()),
+                      "endDate": $.trim($("#edit-endDate").val()),
+                      "cost": $.trim($("#edit-cost").val()),
+                      "description": $.trim($("#edit-description").val())
+                  },
+                  type: "post",
+                  dataType: "json",
+                  success: function (data) {
+                      /*
+                        data
+                          {"success":true/false}
+                       */
+                      if (data.success) {
+                          //修改成功后
+                          //刷新市场活动信息列表（局部刷新）
+                          //pageList(1,2);
+                          /*
+                            修改操作后，应该维持在当前页，维持每页展现的记录数
+                           */
+                          pageList($("#activityPage").bs_pagination('getOption', 'currentPage'), $("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
+                          //关闭修改操作的模态窗口
+                          $("#editActivityModal").modal("hide");
+                      } else {
+                          alert("修改市场活动失败");
+                      }
+                  }
+              });
+          });
+
           // 把填写的信息全部清空
           /*function clearForm() {
               $("#create-name").val("");
@@ -292,14 +338,11 @@
                       maxRowsPerPage: 20, // 每页最多显示的记录条数
                       totalPages: totalPages, // 总页数
                       totalRows: data.total, // 总记录条数
-
                       visiblePageLinks: 3, // 显示几个卡片
-
                       showGoToPage: true,
                       showRowsPerPage: true,
                       showRowsInfo: true,
                       showRowsDefaultInfo: true,
-
                       //该回调函数时在，点击分页组件的时候触发的
                       onChangePage: function (event, data) {
                           pageList(data.currentPage, data.rowsPerPage);
@@ -443,8 +486,8 @@
       <div class="modal-footer">
         <%--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
         <button type="button" class="btn btn-primary" data-dismiss="modal">更新</button>--%>
-          <button type="button" class="btn btn-default" id="edit-closeBtn">关闭</button>
-          <button type="button" class="btn btn-primary" id="updateBtn">更新</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="updateBtn">更新</button>
       </div>
     </div>
   </div>

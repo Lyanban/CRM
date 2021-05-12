@@ -66,4 +66,9 @@ public class ActivityServiceImpl implements ActivityService {
         map.put("a", a);
         return map;
     }
+
+    @Override
+    public boolean update(Activity activity) {
+        return activityDao.update(activity) == 1;
+    }
 }

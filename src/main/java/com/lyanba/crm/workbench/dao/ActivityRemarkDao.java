@@ -1,5 +1,9 @@
 package com.lyanba.crm.workbench.dao;
 
+import com.lyanba.crm.workbench.domain.ActivityRemark;
+
+import java.util.List;
+
 /**
  * @className: ActivityRemarkDao
  * @description:
@@ -10,4 +14,8 @@ public interface ActivityRemarkDao {
     int getCountByAids(String[] ids);
 
     int deleteByAids(String[] ids);
+
+    List<ActivityRemark> getRemarkListByActivityId(String activityId);
+
+    // List<ActivityRemark> getRemarkListByActivityId(String activityId);
 }

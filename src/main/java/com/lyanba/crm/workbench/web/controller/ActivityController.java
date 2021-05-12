@@ -9,6 +9,7 @@ import com.lyanba.crm.utils.ServiceFactory;
 import com.lyanba.crm.utils.UUIDUtil;
 import com.lyanba.crm.vo.PaginationVO;
 import com.lyanba.crm.workbench.domain.Activity;
+import com.lyanba.crm.workbench.domain.ActivityRemark;
 import com.lyanba.crm.workbench.service.ActivityService;
 import com.lyanba.crm.workbench.service.impl.ActivityServiceImpl;
 
@@ -44,7 +45,28 @@ public class ActivityController extends HttpServlet {
             getUserListAndActivity(request, response);
         } else if ("/workbench/activity/update.do".equals(path)) {
             update(request, response);
+        } else if ("/workbench/activity/detail.do".equals(path)) {
+            detail(request, response);
+        } else if ("/workbench/activity/getRemarkListByActivityId.do".equals(path)) {
+            getRemarkListByActivityId(request, response);
         }
+    }
+
+    private void getRemarkListByActivityId(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(">---------- 进入到根据市场活动ID获取备注信息列表的操作 ----------<");
+        String activityId = request.getParameter("activityId");
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        List<ActivityRemark> arList = activityService.getRemarkListByActivityId(activityId);
+        PrintJson.printJsonObj(response, arList);
+    }
+
+    private void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println(">---------- 进入到市场活动详情页面 ----------<");
+        String id = request.getParameter("id");
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        Activity activity = activityService.detail(id);
+        request.setAttribute("activity", activity);
+        request.getRequestDispatcher("/workbench/activity/detail.jsp").forward(request, response);
     }
 
     private void update(HttpServletRequest request, HttpServletResponse response) {

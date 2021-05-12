@@ -7,6 +7,7 @@ import com.lyanba.crm.vo.PaginationVO;
 import com.lyanba.crm.workbench.dao.ActivityDao;
 import com.lyanba.crm.workbench.dao.ActivityRemarkDao;
 import com.lyanba.crm.workbench.domain.Activity;
+import com.lyanba.crm.workbench.domain.ActivityRemark;
 import com.lyanba.crm.workbench.service.ActivityService;
 
 import java.util.HashMap;
@@ -70,5 +71,17 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public boolean update(Activity activity) {
         return activityDao.update(activity) == 1;
+    }
+
+    @Override
+    public Activity detail(String id) {
+        return activityDao.detail(id);
+    }
+
+    @Override
+    public List<ActivityRemark> getRemarkListByActivityId(String activityId) {
+        List<ActivityRemark> arList = activityRemarkDao.getRemarkListByActivityId(activityId);
+        // return activityRemarkDao.getRemarkListByActivityId(activityId);
+        return arList;
     }
 }

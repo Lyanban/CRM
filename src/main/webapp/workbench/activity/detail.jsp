@@ -14,7 +14,6 @@
   <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 
   <script type="text/javascript">
-
       //默认情况下取消和保存按钮是隐藏的
       var cancelAndSaveBtnDefault = true;
 
@@ -54,8 +53,17 @@
           });
 
           showRemarkList();
+
+          $("#remarkBody").on("mouseover", ".remarkDiv", function () {
+              $(this).children("div").children("div").show();
+          });
+
+          $("#remarkBody").on("mouseout", ".remarkDiv", function () {
+              $(this).children("div").children("div").hide();
+          });
       });
 
+      // 获取备注信息列表
       function showRemarkList() {
           $.ajax({
               url: "workbench/activity/getRemarkListByActivityId.do",
@@ -74,11 +82,14 @@
                       html += '<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
                       html += '<div style="position: relative; top: -40px; left: 40px;" >';
                       html += '<h5 id="e' + item.id + '">' + item.noteContent + '</h5>';
-                      html += '<font color="gray">市场活动</font> <font color="gray">-</font> <b>${requestScope.activity.name}</b> <small style="color: gray;" id="s' + item.id + '"> ' + (item.editFlag === "0" ? item.createTime : item.editTime) + ' 由 ' + (item.editFlag === "0" ? item.createBy : item.editBy) + '</small>';
+                      html += '<font color="gray">市场活动</font> <font color="gray">-</font> <b> ${requestScope.activity.name} </b> <small style="color: gray;" id="s' + item.id + '"> ' +
+                          (item.editFlag === "0" ? item.createTime : item.editTime) + ' 由 ' + (item.editFlag === "0" ? item.createBy : item.editBy) + '</small>';
                       html += '<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
-                      html += '<a class="myHref" href="javascript:void(0);" onclick="editRemark(\'' + item.id + '\')"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #FF0000;"></span></a>';
+                      html += '<a class="myHref" href="javascript:void(0);" onclick="editRemark(\'' + item.id +
+                          '\')"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #FF0000;"></span></a>';
                       html += '&nbsp;&nbsp;&nbsp;&nbsp;';
-                      html += '<a class="myHref" href="javascript:void(0);" onclick="deleteRemark(\'' + item.id + '\')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
+                      html += '<a class="myHref" href="javascript:void(0);" onclick="deleteRemark(\'' + item.id +
+                          '\')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
                       html += '</div>';
                       html += '</div>';
                       html += '</div>';
@@ -88,6 +99,25 @@
           });
       }
 
+      function deleteRemark(id) {
+          if (confirm("确认删除该备注？")) {
+              $.ajax({
+                  url: "workbench/activity/deleteRemark.do",
+                  type: "get",
+                  data: {
+                      "id": id
+                  },
+                  dataType: "post",
+                  success: function (data) {
+                      if (data.success) {
+                          $("#"+id).remove();
+                      } else {
+                          alert("删除备注失败！");
+                      }
+                  }
+              });
+          }
+      }
   </script>
 
 </head>
@@ -195,7 +225,7 @@
 </div>
 
 <!-- 备注 -->
-<div style="position: relative; top: 30px; left: 40px;">
+<div id="remarkBody" style="position: relative; top: 30px; left: 40px;">
   <div class="page-header">
     <h4>备注</h4>
   </div>
@@ -217,10 +247,10 @@
         </a>
       </div>
     </div>
-  </div>--%>
+  </div>
 
   <!-- 备注2 -->
-  <%--<div class="remarkDiv" style="height: 60px;">
+  <div class="remarkDiv" style="height: 60px;">
     <img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
     <div style="position: relative; top: -40px; left: 40px;">
       <h5>呵呵！</h5>

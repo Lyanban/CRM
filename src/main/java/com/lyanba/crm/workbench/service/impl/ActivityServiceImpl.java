@@ -80,8 +80,11 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public List<ActivityRemark> getRemarkListByActivityId(String activityId) {
-        List<ActivityRemark> arList = activityRemarkDao.getRemarkListByActivityId(activityId);
-        // return activityRemarkDao.getRemarkListByActivityId(activityId);
-        return arList;
+        return activityRemarkDao.getRemarkListByActivityId(activityId);
+    }
+
+    @Override
+    public boolean deleteRemark(String id) {
+        return activityRemarkDao.deleteRemark(id)  == 1;
     }
 }

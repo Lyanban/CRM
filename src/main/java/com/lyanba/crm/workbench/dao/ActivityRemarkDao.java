@@ -18,4 +18,6 @@ public interface ActivityRemarkDao {
     List<ActivityRemark> getRemarkListByActivityId(String activityId);
 
     int deleteRemark(String id);
+
+    int saveRemark(ActivityRemark activityRemark);
 }

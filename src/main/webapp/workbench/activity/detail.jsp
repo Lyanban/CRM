@@ -61,6 +61,40 @@
           $("#remarkBody").on("mouseout", ".remarkDiv", function () {
               $(this).children("div").children("div").hide();
           });
+
+          // 保存备注信息按钮
+          $("#saveRemarkBtn").on("click", function () {
+              $.ajax({
+                  url: "workbench/activity/saveRemark.do",
+                  type: "post",
+                  data: {
+                      "noteContent": $.trim($("#remark").val()),
+                      "activityId": "${requestScope.activity.id}"
+                  },
+                  dataType: "json",
+                  success: function (data) {
+                      if (data.success) {
+                          $("#remark").val("");
+                          let html = "";
+                          html += '<div id="' + data.activityRemark.id + '" class="remarkDiv" style="height: 60px;">';
+                          html += '<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+                          html += '<div style="position: relative; top: -40px; left: 40px;" >';
+                          html += '<h5>' + data.activityRemark.noteContent + '</h5>';
+                          html += '<font color="gray">市场活动</font> <font color="gray">-</font> <b>${requestScope.activity.name}</b> <small style="color: gray;"> ' + (data.activityRemark.createTime) + ' 由 ' + (data.activityRemark.createBy) + '</small>';
+                          html += '<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
+                          html += '<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #FF0000;"></span></a>';
+                          html += '&nbsp;&nbsp;&nbsp;&nbsp;';
+                          html += '<a class="myHref" href="javascript:void(0);" onclick="deleteRemark(\'' + data.activityRemark.id + '\')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
+                          html += '</div>';
+                          html += '</div>';
+                          html += '</div>';
+                          $("#remarkDiv").before(html);
+                      } else {
+                          alert("添加备注失败！");
+                      }
+                  }
+              });
+          });
       });
 
       // 获取备注信息列表
@@ -110,7 +144,7 @@
                   dataType: "post",
                   success: function (data) {
                       if (data.success) {
-                          $("#"+id).remove();
+                          $("#" + id).remove();
                       } else {
                           alert("删除备注失败！");
                       }
@@ -274,7 +308,7 @@
                 placeholder="添加备注..."></textarea>
       <p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
         <button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-        <button type="button" class="btn btn-primary">保存</button>
+        <button type="button" class="btn btn-primary" id="saveRemarkBtn">保存</button>
       </p>
     </form>
   </div>

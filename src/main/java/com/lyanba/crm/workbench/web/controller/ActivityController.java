@@ -51,7 +51,32 @@ public class ActivityController extends HttpServlet {
             getRemarkListByActivityId(request, response);
         } else if ("/workbench/activity/deleteRemark.do".equals(path)) {
             deleteRemark(request, response);
+        } else if ("/workbench/activity/saveRemark.do".equals(path)) {
+            saveRemark(request, response);
         }
+    }
+
+    private void saveRemark(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(">---------- 进入到添加备注信息的操作 ----------<");
+        String id = UUIDUtil.getUUID();
+        String noteContent = request.getParameter("noteContent");
+        String createTime = DateTimeUtil.getSysTime();
+        String createBy = ((User) request.getSession().getAttribute("user")).getName();
+        String editFlag = "0";
+        String activityId = request.getParameter("activityId");
+        ActivityRemark activityRemark = new ActivityRemark();
+        activityRemark.setId(id);
+        activityRemark.setNoteContent(noteContent);
+        activityRemark.setCreateTime(createTime);
+        activityRemark.setCreateBy(createBy);
+        activityRemark.setEditFlag(editFlag);
+        activityRemark.setActivityId(activityId);
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        boolean flag = activityService.saveRemark(activityRemark);
+        Map<String, Object> map = new HashMap<>();
+        map.put("success", flag);
+        map.put("activityRemark", activityRemark);
+        PrintJson.printJsonObj(response, map);
     }
 
     private void deleteRemark(HttpServletRequest request, HttpServletResponse response) {

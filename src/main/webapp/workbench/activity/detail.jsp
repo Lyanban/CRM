@@ -79,10 +79,10 @@
                           html += '<div id="' + data.activityRemark.id + '" class="remarkDiv" style="height: 60px;">';
                           html += '<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
                           html += '<div style="position: relative; top: -40px; left: 40px;" >';
-                          html += '<h5>' + data.activityRemark.noteContent + '</h5>';
-                          html += '<font color="gray">市场活动</font> <font color="gray">-</font> <b>${requestScope.activity.name}</b> <small style="color: gray;"> ' + (data.activityRemark.createTime) + ' 由 ' + (data.activityRemark.createBy) + '</small>';
+                          html += '<h5 id="e' + data.activityRemark.id + '">' + data.activityRemark.noteContent + '</h5>';
+                          html += '<font color="gray">市场活动</font> <font color="gray">-</font> <b>${requestScope.activity.name}</b> <small style="color: gray;" id="s' + data.activityRemark.id + '"> ' + (data.activityRemark.createTime) + ' 由 ' + (data.activityRemark.createBy) + '</small>';
                           html += '<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
-                          html += '<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #FF0000;"></span></a>';
+                          html += '<a class="myHref" href="javascript:void(0);" onclick="editRemark(\'' + data.activityRemark.id + '\')"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #FF0000;"></span></a>';
                           html += '&nbsp;&nbsp;&nbsp;&nbsp;';
                           html += '<a class="myHref" href="javascript:void(0);" onclick="deleteRemark(\'' + data.activityRemark.id + '\')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
                           html += '</div>';
@@ -94,6 +94,26 @@
                       }
                   }
               });
+          });
+
+          // 修改备注信息
+          $("#updateRemarkBtn").on("click", function () {
+              let id = $("#remarkId").val();
+              $.post("workbench/activity/updateRemark.do",
+                  {
+                      "id": id,
+                      "noteContent": $.trim($("#noteContent").val())
+                  },
+                  function (data) {
+                      if (data.success) {
+                          $("#e" + id).text(data.activityRemark.noteContent);
+                          $("#s" + id).text(data.activityRemark.editTime+" 由 "+data.activityRemark.editBy);
+                          $("#editRemarkModal").modal("hide");
+                      } else {
+                          alert("更新备注信息失败！")
+                      }
+                  },
+                  "json");
           });
       });
 
@@ -133,6 +153,7 @@
           });
       }
 
+      // 删除备注信息
       function deleteRemark(id) {
           if (confirm("确认删除该备注？")) {
               $.ajax({
@@ -151,6 +172,13 @@
                   }
               });
           }
+      }
+
+      // 修改备注信息弹出模态窗口
+      function editRemark(id) {
+          $("#remarkId").val(id);
+          $("#noteContent").val($("#e" + id).text());
+          $("#editRemarkModal").modal("show");
       }
   </script>
 
@@ -172,7 +200,7 @@
       <div class="modal-body">
         <form class="form-horizontal" role="form">
           <div class="form-group">
-            <label for="edit-describe" class="col-sm-2 control-label">内容</label>
+            <label for="noteContent" class="col-sm-2 control-label">内容</label>
             <div class="col-sm-10" style="width: 81%;">
               <textarea class="form-control" rows="3" id="noteContent"></textarea>
             </div>

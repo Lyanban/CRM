@@ -92,4 +92,9 @@ public class ActivityServiceImpl implements ActivityService {
     public boolean saveRemark(ActivityRemark activityRemark) {
         return activityRemarkDao.saveRemark(activityRemark) == 1;
     }
+
+    @Override
+    public boolean updateRemark(ActivityRemark activityRemark) {
+        return activityRemarkDao.updateRemark(activityRemark) == 1;
+    }
 }

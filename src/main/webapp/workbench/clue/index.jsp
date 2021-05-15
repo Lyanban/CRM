@@ -23,6 +23,15 @@
 
   <script type="text/javascript">
       $(function () {
+          $(".time").datetimepicker({
+              minView: "month",
+              language: 'zh-CN',
+              format: 'yyyy-mm-dd',
+              autoclose: true,
+              todayBtn: true,
+              pickerPosition: "top-left"
+          });
+
           // 创建线索按钮
           $("#addBtn").on("click", function () {
               $.get(
@@ -33,6 +42,40 @@
                       });
                       $("#create-owner").val("${sessionScope.user.id}");
                       $("#createClueModal").modal("show");
+                  },
+                  "json"
+              );
+          });
+
+          // 保存线索按钮
+          $("#saveBtn").on("click", function () {
+              $.post(
+                  "workbench/clue/save.do",
+                  {
+                      "fullname": $.trim($("#create-fullname").val()),
+                      "appellation": $.trim($("#create-appellation").val()),
+                      "owner": $.trim($("#create-owner").val()),
+                      "company": $.trim($("#create-company").val()),
+                      "job": $.trim($("#create-job").val()),
+                      "email": $.trim($("#create-email").val()),
+                      "phone": $.trim($("#create-phone").val()),
+                      "website": $.trim($("#create-website").val()),
+                      "mphone": $.trim($("#create-mphone").val()),
+                      "state": $.trim($("#create-state").val()),
+                      "source": $.trim($("#create-source").val()),
+                      "description": $.trim($("#create-description").val()),
+                      "contactSummary": $.trim($("#create-contactSummary").val()),
+                      "nextContactTime": $.trim($("#create-nextContactTime").val()),
+                      "address": $.trim($("#create-address").val())
+                  },
+                  function (data) {
+                      if (data.success) {
+                          //刷新列表 略
+                          //关闭模态窗口
+                          $("#createClueModal").modal("hide");
+                      } else {
+                          alert("添加线索失败");
+                      }
                   },
                   "json"
               );
@@ -54,7 +97,6 @@
       </div>
       <div class="modal-body">
         <form class="form-horizontal" role="form">
-
           <div class="form-group">
             <label for="create-owner" class="col-sm-2 control-label">所有者<span
                     style="font-size: 15px; color: red;">*</span></label>
@@ -87,10 +129,10 @@
                 <option>教授</option>--%>
               </select>
             </div>
-            <label for="create-surname" class="col-sm-2 control-label">姓名<span
+            <label for="create-fullname" class="col-sm-2 control-label">姓名<span
                     style="font-size: 15px; color: red;">*</span></label>
             <div class="col-sm-10" style="width: 300px;">
-              <input type="text" class="form-control" id="create-surname">
+              <input type="text" class="form-control" id="create-fullname">
             </div>
           </div>
 
@@ -165,11 +207,10 @@
             </div>
           </div>
 
-
           <div class="form-group">
-            <label for="create-describe" class="col-sm-2 control-label">线索描述</label>
+            <label for="create-description" class="col-sm-2 control-label">线索描述</label>
             <div class="col-sm-10" style="width: 81%;">
-              <textarea class="form-control" rows="3" id="create-describe"></textarea>
+              <textarea class="form-control" rows="3" id="create-description"></textarea>
             </div>
           </div>
 
@@ -185,7 +226,7 @@
             <div class="form-group">
               <label for="create-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
               <div class="col-sm-10" style="width: 300px;">
-                <input type="text" class="form-control" id="create-nextContactTime">
+                <input type="text" class="form-control time" id="create-nextContactTime" placeholder="请选择时间" readonly>
               </div>
             </div>
           </div>
@@ -205,7 +246,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+        <button type="button" class="btn btn-primary" id="saveBtn">保存</button>
       </div>
     </div>
   </div>
@@ -559,9 +600,7 @@
         </nav>
       </div>
     </div>
-
   </div>
-
 </div>
 </body>
 </html>

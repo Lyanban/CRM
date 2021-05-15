@@ -14,4 +14,6 @@ public interface ClueService {
     Clue detail(String id);
 
     boolean unbind(String id);
+
+    boolean bind(String cid, String[] aids);
 }

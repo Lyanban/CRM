@@ -111,4 +111,20 @@
                 on a.id = car.activityId
     where car.clueId = #{clueId}
   </select>
+
+  <select id="getActivityListByNameAndNotByClueId" resultType="com.lyanba.crm.workbench.domain.Activity">
+    select a.id,
+           a.name,
+           a.startDate,
+           a.endDate,
+           u.id as owner
+    from tbl_activity a
+           join tbl_user u
+                on a.owner = u.id
+    where a.name like '%' #{activityName} '%' and a.id not in (
+        select activityId
+        from tbl_clue_activity_relation
+        where clueId = #{clueId}
+      )
+  </select>
 </mapper>

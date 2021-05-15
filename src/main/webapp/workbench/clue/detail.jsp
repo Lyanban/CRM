@@ -52,8 +52,66 @@
               $(this).children("span").css("color", "#E6E6E6");
           });
 
-          //页面加载完毕后，取出关联的市场活动信息列表
+          // 页面加载完毕后，取出关联的市场活动信息列表
           showActivityList();
+
+          // 为关联市场活动模态窗口中的 搜索框 绑定事件，通过触发回车键，查询并展现所需市场活动列表
+          $("#activityName").on("keydown", function (event) {
+              if (event.keyCode === 13) {
+                  $("#activitySearchBody").empty();
+                  $.get(
+                      "workbench/clue/getActivityListByNameAndNotByClueId.do",
+                      {
+                          "activityName": $.trim($("#activityName").val()),
+                          "clueId": "${requestScope.clue.id}"
+                      },
+                      function (data) {
+                          $.each(data, function (i, n) {
+                              let html = "";
+                              html += '<tr>';
+                              html += '<td><input type="checkbox" name="xz" value="' + n.id + '"/></td>';
+                              html += '<td>' + n.name + '</td>';
+                              html += '<td>' + n.startDate + '</td>';
+                              html += '<td>' + n.endDate + '</td>';
+                              html += '<td>' + n.owner + '</td>';
+                              html += '</tr>';
+                              $("#activitySearchBody").append(html);
+                          });
+                      },
+                      "json"
+                  );
+                  // 展现完列表后，将模态窗口默认的回车行为禁用掉
+                  return false;
+              }
+          });
+
+          // 为关联按钮绑定事件，执行关联表的添加操作
+          $("#bindBtn").on("click", function () {
+              let $xz = $("input[name=xz]:checked");
+              if ($xz.length === 0) {
+                  alert("请选择需要关联的市场活动！");
+              } else {
+                  let param = "cid=${requestScope.clue.id}&";
+                  for (let i = 0; i < $xz.length; i++) {
+                      param += "aid=" + $($xz[i]).val() + "&";
+                  }
+                  param = param.substr(0, param.length - 1);
+                  $.post(
+                      "workbench/clue/bind.do",
+                      param,
+                      function (data) {
+                          if (data.success) {
+                              $("#activityBody").empty();
+                              showActivityList();
+                              $("#bundModal").modal("hide");
+                          } else {
+                              alert("关联市场活动失败！");
+                          }
+                      },
+                      "json"
+                  );
+              }
+          });
       });
 
       function showActivityList() {
@@ -111,7 +169,8 @@
         <div class="btn-group" style="position: relative; top: 18%; left: 8px;">
           <form class="form-inline" role="form">
             <div class="form-group has-feedback">
-              <input type="text" class="form-control" style="width: 300px;" placeholder="请输入市场活动名称，支持模糊查询">
+              <input type="text" class="form-control" style="width: 300px;" id="activityName"
+                     placeholder="请输入市场活动名称，支持模糊查询">
               <span class="glyphicon glyphicon-search form-control-feedback"></span>
             </div>
           </form>
@@ -127,8 +186,8 @@
             <td></td>
           </tr>
           </thead>
-          <tbody>
-          <tr>
+          <tbody id="activitySearchBody">
+          <%--<tr>
             <td><input type="checkbox"/></td>
             <td>发传单</td>
             <td>2020-10-10</td>
@@ -141,13 +200,13 @@
             <td>2020-10-10</td>
             <td>2020-10-20</td>
             <td>zhangsan</td>
-          </tr>
+          </tr>--%>
           </tbody>
         </table>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">关联</button>
+        <button type="button" class="btn btn-primary" id="bindBtn">关联</button>
       </div>
     </div>
   </div>

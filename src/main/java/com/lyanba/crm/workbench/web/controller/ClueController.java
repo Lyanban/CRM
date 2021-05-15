@@ -19,7 +19,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @className: ClueController
@@ -42,7 +44,32 @@ public class ClueController extends HttpServlet {
             getActivityListByClueId(request, response);
         } else if ("/workbench/clue/unbind.do".equals(path)) {
             unbind(request, response);
+        } else if ("/workbench/clue/getActivityListByNameAndNotByClueId.do".equals(path)) {
+            getActivityListByNameAndNotByClueId(request, response);
+        } else if ("/workbench/clue/bind.do".equals(path)) {
+            bind(request, response);
         }
+    }
+
+    private void bind(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(">---------- 执行关联市场活动的操作 ----------<");
+        String cid = request.getParameter("cid");
+        String[] aids = request.getParameterValues("aid");
+        ClueService clueService = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+        boolean flag = clueService.bind(cid, aids);
+        PrintJson.printJsonFlag(response, flag);
+    }
+
+    private void getActivityListByNameAndNotByClueId(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(">---------- 查询市场活动列表（根据名称模糊查 + 排除掉已经关联指定线索的列表） ----------<");
+        String activityName = request.getParameter("activityName");
+        String clueId = request.getParameter("clueId");
+        Map<String, String> map = new HashMap<>();
+        map.put("activityName", activityName);
+        map.put("clueId", clueId);
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        List<Activity> activityList = activityService.getActivityListByNameAndNotByClueId(map);
+        PrintJson.printJsonObj(response, activityList);
     }
 
     private void unbind(HttpServletRequest request, HttpServletResponse response) {

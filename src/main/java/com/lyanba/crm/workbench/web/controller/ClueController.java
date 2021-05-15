@@ -7,8 +7,11 @@ import com.lyanba.crm.utils.DateTimeUtil;
 import com.lyanba.crm.utils.PrintJson;
 import com.lyanba.crm.utils.ServiceFactory;
 import com.lyanba.crm.utils.UUIDUtil;
+import com.lyanba.crm.workbench.domain.Activity;
 import com.lyanba.crm.workbench.domain.Clue;
+import com.lyanba.crm.workbench.service.ActivityService;
 import com.lyanba.crm.workbench.service.ClueService;
+import com.lyanba.crm.workbench.service.impl.ActivityServiceImpl;
 import com.lyanba.crm.workbench.service.impl.ClueServiceImpl;
 
 import javax.servlet.ServletException;
@@ -33,7 +36,38 @@ public class ClueController extends HttpServlet {
             getUserList(request, response);
         } else if ("/workbench/clue/save.do".equals(path)) {
             save(request, response);
+        } else if ("/workbench/clue/detail.do".equals(path)) {
+            detail(request, response);
+        } else if ("/workbench/clue/getActivityListByClueId.do".equals(path)) {
+            getActivityListByClueId(request, response);
+        } else if ("/workbench/clue/unbind.do".equals(path)) {
+            unbind(request, response);
         }
+    }
+
+    private void unbind(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(">---------- 执行解除关联操作 ----------<");
+        String id = request.getParameter("id");
+        ClueService clueService = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+        boolean flag = clueService.unbind(id);
+        PrintJson.printJsonFlag(response, flag);
+    }
+
+    private void getActivityListByClueId(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(">---------- 根据线索ID查询市场活动列表 ----------<");
+        String clueId = request.getParameter("clueId");
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        List<Activity> activityList = activityService.getActivityListByClueId(clueId);
+        PrintJson.printJsonObj(response, activityList);
+    }
+
+    private void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println(">---------- 进入到线索详细信息页 ----------<");
+        String id = request.getParameter("id");
+        ClueService clueService = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+        Clue clue = clueService.detail(id);
+        request.setAttribute("clue", clue);
+        request.getRequestDispatcher("/workbench/clue/detail.jsp").forward(request, response);
     }
 
     private void save(HttpServletRequest request, HttpServletResponse response) {

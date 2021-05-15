@@ -541,7 +541,7 @@
         <tr>
           <td><input type="checkbox"/></td>
           <td><a style="text-decoration: none; cursor: pointer;"
-                 onclick="window.location.href='workbench/clue/detail.jsp';">李四先生</a>
+                 onclick="window.location.href='workbench/clue/detail.do?id=e6becf251f5d4e1c9389181104af9ef6';">马云先生</a>
           </td>
           <td>动力节点</td>
           <td>010-84846003</td>
@@ -566,6 +566,7 @@
       </table>
     </div>
 
+    <%-- 分页组件 --%>
     <div style="height: 50px; position: relative;top: 60px;">
       <div>
         <button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>

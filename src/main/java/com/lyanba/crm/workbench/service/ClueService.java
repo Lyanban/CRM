@@ -10,4 +10,8 @@ import com.lyanba.crm.workbench.domain.Clue;
  */
 public interface ClueService {
     boolean save(Clue clue);
+
+    Clue detail(String id);
+
+    boolean unbind(String id);
 }

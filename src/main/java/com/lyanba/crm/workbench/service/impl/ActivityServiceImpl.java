@@ -97,4 +97,9 @@ public class ActivityServiceImpl implements ActivityService {
     public boolean updateRemark(ActivityRemark activityRemark) {
         return activityRemarkDao.updateRemark(activityRemark) == 1;
     }
+
+    @Override
+    public List<Activity> getActivityListByClueId(String clueId) {
+        return activityDao.getActivityListByClueId(clueId);
+    }
 }

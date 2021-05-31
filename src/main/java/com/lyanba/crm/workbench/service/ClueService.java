@@ -1,6 +1,7 @@
 package com.lyanba.crm.workbench.service;
 
 import com.lyanba.crm.workbench.domain.Clue;
+import com.lyanba.crm.workbench.domain.Tran;
 
 /**
  * @className: ClueService
@@ -16,4 +17,6 @@ public interface ClueService {
     boolean unbind(String id);
 
     boolean bind(String cid, String[] aids);
+
+    boolean convert(String clueId, Tran tran, String createBy);
 }

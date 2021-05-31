@@ -1,5 +1,7 @@
 package com.lyanba.crm.workbench.dao;
 
-public interface ContactsActivityRelationDao {
+import com.lyanba.crm.workbench.domain.ContactsActivityRelation;
 
+public interface ContactsActivityRelationDao {
+    int save(ContactsActivityRelation contactsActivityRelation);
 }

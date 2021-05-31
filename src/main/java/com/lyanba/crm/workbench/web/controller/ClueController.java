@@ -9,6 +9,7 @@ import com.lyanba.crm.utils.ServiceFactory;
 import com.lyanba.crm.utils.UUIDUtil;
 import com.lyanba.crm.workbench.domain.Activity;
 import com.lyanba.crm.workbench.domain.Clue;
+import com.lyanba.crm.workbench.domain.Tran;
 import com.lyanba.crm.workbench.service.ActivityService;
 import com.lyanba.crm.workbench.service.ClueService;
 import com.lyanba.crm.workbench.service.impl.ActivityServiceImpl;
@@ -48,7 +49,51 @@ public class ClueController extends HttpServlet {
             getActivityListByNameAndNotByClueId(request, response);
         } else if ("/workbench/clue/bind.do".equals(path)) {
             bind(request, response);
+        } else if ("/workbench/clue/getActivityListByName.do".equals(path)) {
+            getActivityListByName(request, response);
+        } else if ("/workbench/clue/convert.do".equals(path)) {
+            convert(request, response);
         }
+    }
+
+    private void convert(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println(">---------- 执行线索转换的操作 ----------<");
+        String clueId = request.getParameter("clueId");
+        String flag = request.getParameter("flag");
+        String createBy = ((User) request.getSession().getAttribute("user")).getName();
+        Tran tran = null;
+        if ("a".equals(flag)) {
+            tran = new Tran();
+            //接收交易表单中的参数
+            String money = request.getParameter("money"); // 交易金额
+            String name = request.getParameter("name"); // 交易名称
+            String expectedDate = request.getParameter("expectedDate"); // 预计成交日期
+            String stage = request.getParameter("stage"); // 阶段
+            String activityId = request.getParameter("activityId"); // 选中的市场活动ID
+            String id = UUIDUtil.getUUID();
+            String createTime = DateTimeUtil.getSysTime();
+            tran.setId(id);
+            tran.setMoney(money);
+            tran.setName(name);
+            tran.setExpectedDate(expectedDate);
+            tran.setStage(stage);
+            tran.setActivityId(activityId);
+            tran.setCreateBy(createBy);
+            tran.setCreateTime(createTime);
+        }
+        ClueService clueService = (ClueService) ServiceFactory.getService(new ClueServiceImpl());
+        boolean result = clueService.convert(clueId, tran, createBy);
+        if (result) {
+            response.sendRedirect(request.getContextPath() + "/workbench/clue/index.jsp");
+        }
+    }
+
+    private void getActivityListByName(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(">---------- 查询市场活动列表（根据名称模糊查） ----------<");
+        String activityName = request.getParameter("activityName");
+        ActivityService activityService = (ActivityService) ServiceFactory.getService(new ActivityServiceImpl());
+        List<Activity> activityList = activityService.getActivityListByName(activityName);
+        PrintJson.printJsonObj(response, activityList);
     }
 
     private void bind(HttpServletRequest request, HttpServletResponse response) {
@@ -112,7 +157,7 @@ public class ClueController extends HttpServlet {
         String state = request.getParameter("state");
         String source = request.getParameter("source");
         String createTime = DateTimeUtil.getSysTime();
-        String createBy = ((User)request.getSession().getAttribute("user")).getName();
+        String createBy = ((User) request.getSession().getAttribute("user")).getName();
         String description = request.getParameter("description");
         String contactSummary = request.getParameter("contactSummary");
         String nextContactTime = request.getParameter("nextContactTime");

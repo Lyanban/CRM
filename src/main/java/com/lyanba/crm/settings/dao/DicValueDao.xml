@@ -4,6 +4,6 @@
 
 <mapper namespace="com.lyanba.crm.settings.dao.DicValueDao">
   <select id="getListByCode" resultType="com.lyanba.crm.settings.domain.DicValue">
-    select * from tbl_dic_value where typeCode = #{code}
+    select * from tbl_dic_value where typeCode = #{code} order by orderNo asc
   </select>
 </mapper>

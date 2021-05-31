@@ -1,5 +1,7 @@
 package com.lyanba.crm.workbench.dao;
 
-public interface TranDao {
+import com.lyanba.crm.workbench.domain.Tran;
 
+public interface TranDao {
+    int save(Tran tran);
 }

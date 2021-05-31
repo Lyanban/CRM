@@ -1,5 +1,9 @@
 package com.lyanba.crm.workbench.dao;
 
-public interface CustomerDao {
+import com.lyanba.crm.workbench.domain.Customer;
 
+public interface CustomerDao {
+    Customer getCustomerByName(String company);
+
+    int save(Customer customer);
 }
